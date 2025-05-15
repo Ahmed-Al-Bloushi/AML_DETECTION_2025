@@ -8,7 +8,10 @@ UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-with open('model.pkl', 'rb') as f:
+# with open('model.pkl', 'rb') as f:
+#     model = pickle.load(f)
+
+with open('best_model.pkl', 'rb') as f:
     model = pickle.load(f)
 
 @app.route('/')
@@ -29,9 +32,12 @@ def analyze():
         else:
             return "Missing 'type' column."
 
-        feature_cols = ['amount', 'oldbalanceOrg', 'newbalanceOrig', 'type_code']
+        df['balance_diff'] = df['oldbalanceOrg'] - df['newbalanceOrig']
+
+        feature_cols = ['amount', 'oldbalanceOrg', 'newbalanceOrig', 'type_code', 'balance_diff']
         if not all(col in df.columns for col in feature_cols):
             return "Missing required columns."
+
 
         X = df[feature_cols]
         predictions = model.predict(X)

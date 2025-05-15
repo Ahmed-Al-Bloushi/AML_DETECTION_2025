@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AML File Upload | ATS Sharjah</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Outfit', sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-radius: 20px;
+      padding: 40px 30px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .glass-card img {
+      width: 180px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 14px;
+      margin-bottom: 30px;
+      color: #d1d5db;
+    }
+
+    input[type="file"] {
+      background-color: rgba(255, 255, 255, 0.1);
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      color: white;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    .file-name {
+      font-size: 12px;
+      color: #ccc;
+      margin-bottom: 20px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      color: white;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease-in-out;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #0072ff, #00c6ff);
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      width: 0%;
+      border-radius: 4px;
+      transition: width 1s ease;
+      margin-top: 15px;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="glass-card">
+    <img src="https://www.google.com/imgres?imgurl=https%3A%2F%2Fwww.iat.ac.ae%2Fwp-content%2Fuploads%2F2024%2F01%2FATS-Logo-Graphics-1.svg&tbnid=56KolSTgbyUF8M&vet=12ahUKEwi6_qrmyKSNAxV3l_0HHe5iHWAQxiAoAnoECAAQNQ..i&imgrefurl=https%3A%2F%2Fwww.iat.ac.ae%2Fdegree-programs%2F&docid=688VmafoSIkQNM&w=800&h=800&itg=1&q=applied%20technology%20school&ved=2ahUKEwi6_qrmyKSNAxV3l_0HHe5iHWAQxiAoAnoECAAQNQ">
+    <h1>ATS Sharjah</h1>
+    <p>Upload the transaction csv file.</p>
+    <form id="uploadForm" action="/analyze" method="post" enctype="multipart/form-data">
+
+      <input type="file" id="fileInput" accept=".csv,.xlsx,.xls,.pdf" name="file" />
+      <div class="file-name" id="fileName">No file selected</div>
+      <button type="submit">Upload File</button>
+      <div class="progress-bar" id="progressBar"></div>
+    </form>
+    {% if suspicious is defined and suspicious %}
+      <h2 class="mb-3">Suspicious Transactions</h2>
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+          <thead class="table-dark">
+            <tr>
+              <th>Amount</th>
+              <th>Old Balance</th>
+              <th>New Balance</th>
+              <th>Type</th>
+              <th>Prediction</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in suspicious %}
+            <tr>
+              <td>{{ row['amount'] }}</td>
+              <td>{{ row['oldbalanceOrg'] }}</td>
+              <td>{{ row['newbalanceOrig'] }}</td>
+              <td>{{ row['type'] }}</td>
+              <td>{{ 'Suspicious' if row['isSuspicious'] == 1 else 'Normal' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% elif suspicious is defined %}
+      <div class="alert alert-info">No suspicious transactions found.</div>
+    {% endif %}
+    <footer>© 2025 ATS Sharjah<br>Team: Mohammed Khalid, Hamad Yousif, Ammar Mustafa, Khalid Omran, Ahmed Abdulwahaab</footer>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const fileName = document.getElementById('fileName');
+    const form = document.getElementById('uploadForm');
+    const progressBar = document.getElementById('progressBar');
+
+    fileInput.addEventListener('change', () => {
+      fileName.textContent = fileInput.files.length > 0 ? fileInput.files[0].name : 'No file selected';
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      progressBar.style.width = '0%';
+      setTimeout(() => {
+        progressBar.style.width = '100%';
+      }, 100);
+    });
+  </script>
+</body>
+</html>

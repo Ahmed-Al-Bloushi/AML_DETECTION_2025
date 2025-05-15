@@ -8,47 +8,48 @@
 <body class="bg-light">
     <div class="container py-5">
         <h1 class="mb-4 text-center">Anti-Money Laundering Application</h1>
+
         <form action="/analyze" method="post" enctype="multipart/form-data" class="mb-5 p-4 bg-white rounded shadow-sm">
             <div class="mb-3">
-                <label for="file" class="form-label">Upload the csv file of transactions to be processed:</label>
+                <label for="file" class="form-label">Upload the CSV file of transactions to be processed:</label>
                 <input type="file" name="file" id="file" accept=".csv" required class="form-control">
             </div>
             <button type="submit" class="btn btn-primary">Analyze</button>
         </form>
 
-        {% if suspicious is not none and not suspicious.empty %}
-        <h2 class="mb-3">Suspicious Transactions</h2>
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Amount</th>
-                        <th>Old Balance</th>
-                        <th>New Balance</th>
-                        <th>Type</th>
-                        <th>Prediction</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for _, row in suspicious.iterrows() %}
-                    <tr>
-                        <td>{{ row['amount'] }}</td>
-                        <td>{{ row['oldbalanceOrg'] }}</td>
-                        <td>{{ row['newbalanceOrig'] }}</td>
-                        <td>{{ row['type'] }}</td>
-                        <td>{{ row['isSuspicious'] }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% elif suspicious is not none %}
-        <div class="alert alert-info">No suspicious transactions found.</div>
+        {% if suspicious is defined and suspicious %}
+            <h2 class="mb-3">Suspicious Transactions</h2>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Amount</th>
+                            <th>Old Balance</th>
+                            <th>New Balance</th>
+                            <th>Type</th>
+                            <th>Prediction</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in suspicious %}
+                        <tr>
+                            <td>{{ row['amount'] }}</td>
+                            <td>{{ row['oldbalanceOrg'] }}</td>
+                            <td>{{ row['newbalanceOrig'] }}</td>
+                            <td>{{ row['type'] }}</td>
+                            <td>{{ row['isSuspicious'] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% elif suspicious is defined %}
+            <div class="alert alert-info">No suspicious transactions found.</div>
         {% endif %}
 
-        <h6 class="mb-4 text-center"> By: Ahmed Abdulwahaab, Ammar Mustafa, Hamad Yousif, Mohamed Khaled, Khalid Omran </h6>
-        <p class="mb-4 text-center"> 12 CAI </p>
-        <p class="mb-4 text-center"> Class of 2025 </p>
+        <h6 class="mb-4 text-center">By: Ahmed Abdulwahaab, Ammar Mustafa, Hamad Yousif, Mohamed Khaled, Khalid Omran</h6>
+        <p class="mb-4 text-center">12 CAI</p>
+        <p class="mb-4 text-center">Class of 2025</p>
     </div>
 </body>
 </html>
